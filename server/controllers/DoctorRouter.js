@@ -51,5 +51,14 @@ router.get('/user/:userId', async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 });
-
+router.delete("/:doctorId", authMiddleware, authenticateRole('admin'), async (req, res) => {
+    try {
+      const doctorId = req.params.doctorId;
+      // Find the doctor by ID and delete it from the database
+      await DoctorModel.findByIdAndDelete(doctorId);
+      res.status(200).json({ message: 'Doctor deleted successfully' });
+    } catch (error) {
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  });
 export { router as DoctorRouter };

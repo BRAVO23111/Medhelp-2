@@ -11,6 +11,7 @@ import ViewAppointment from './components/ViewAppoinments';
 import AdminDashboard from './components/AdminDashboard';
 import Doctordashboard from './components/Doctordashboard';
 import AddDoctor from './components/AddDoctor';
+import ManageDoctors from './components/MangeDoctor';
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
             <Route path='/admindashboard' element={<AdminDashboard />} />
             <Route path='/doctordashboard' element={<Doctordashboard />} />
             <Route path='/adddoctor' element={<AddDoctor />} />
+            <Route path='/manage' element={<ManageDoctors />} />
           </Routes>
         </div>
       </Router>

@@ -46,9 +46,19 @@ const Navbar = () => {
               <Link to="/adddoctor" className="text-white mr-4 hover:text-blue-200">Add Doctor</Link>
             </li>
           )}
+          {userRole === 'patient' && (
+            <li>
+              <Link to="/viewappointments" className="text-white mr-4 hover:text-blue-200">Appointments</Link>
+            </li>
+          )}
           {isLoggedIn && (
             <li>
               <button onClick={handleLogout} className="text-white mr-4 hover:text-blue-200">Logout</button>
+            </li>
+          )}
+          {( userRole === 'admin') && ( // Show the "Manage" button for doctors and admins
+            <li>
+              <Link to="/manage" className="text-white mr-4 hover:text-blue-200">Manage</Link>
             </li>
           )}
         </ul>
