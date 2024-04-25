@@ -1,11 +1,14 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors'
+import dotenv from 'dotenv';
 import { userRouter } from './controllers/AuthController.js';
 import { DoctorRouter } from './controllers/DoctorRouter.js';
 import { AppointmentRouter } from './controllers/AppointmentRouter.js';
 
-const db = mongoose.connect("mongodb+srv://test:test@cluster0.0dmeadv.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+dotenv.config();
+
+const db = mongoose.connect(process.env.MONGO_URI)
 try {
     if(db){
         console.log("database connected");
@@ -15,7 +18,11 @@ try {
 }
 
 const app = express();
-app.use(cors());
+app.use(cors({
+    origin : ["https://medhelp-2-lr28.vercel.app"],
+    methods : ["GET", "POST" ,"PUT","DELETE"],
+    credentials :true
+}));
 app.use(express.json())
 
 //ROUTES
