@@ -15,7 +15,7 @@ const AddDoctor = () => {
       const token = window.localStorage.getItem("token");
 
       // Send the request to register a new doctor with authorization header
-      const response = await axios.post('http://localhost:3000/doctors/registerdoctor', {
+      const response = await axios.post('https://medhelp-2.onrender.com/doctors/registerdoctor', {
         username: username,
         password: password,
         speciality: speciality,

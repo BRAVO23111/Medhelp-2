@@ -15,7 +15,7 @@ const ManageDoctors = () => {
         return;
       }
       
-      const response = await axios.get("http://localhost:3000/doctors", {
+      const response = await axios.get("https://medhelp-2.onrender.com/doctors", {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -43,7 +43,7 @@ const ManageDoctors = () => {
       }
 
       // Delete the doctor from the server
-      await axios.delete(`http://localhost:3000/doctors/${doctorId}`, {
+      await axios.delete(`https://medhelp-2.onrender.com/doctors/${doctorId}`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
