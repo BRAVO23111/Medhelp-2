@@ -27,7 +27,7 @@ const Bookappointment = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await axios.post("https://medhelp-2.onrender.com/appointment/bookappointment", {
+      const response = await axios.post(" https://medhelp-2.onrender.com/appointment/bookappointment", {
         doctorId: actualDoctorId, // Use actualDoctorId
         patientId: patientId, 
         date: new Date(date).toISOString() 

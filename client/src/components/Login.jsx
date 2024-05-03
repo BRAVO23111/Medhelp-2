@@ -1,12 +1,51 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useSetRecoilState } from 'recoil';
+import { Link, useNavigate } from 'react-router-dom';
+import { userState } from '../atoms/Doctoratom'; 
+import toast, { Toaster } from 'react-hot-toast';
+// Assuming you have a userState Recoil atom
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState('patient');
+  const [role, setRole] = useState('patient'); // Define role state
+  const setUserData = useSetRecoilState(userState);
   const navigate = useNavigate();
+  const notify = () => toast('Logged in. Please Refresh to see changes ');
+
+  useEffect(() => {
+    const initializeUserFromStorage = () => {
+      const token = window.localStorage.getItem('token');
+      const userId = window.localStorage.getItem('userId');
+      const userRole = window.localStorage.getItem('userRole');
+
+      if (token && userId && userRole) {
+        setUserData({
+          id: userId,
+          token: token,
+          role: userRole,
+        });
+
+        // Redirect to appropriate page based on role
+        switch (userRole) {
+          case 'admin':
+            navigate('/admindashboard');
+            break;
+          case 'patient':
+            navigate('/patientDashboard');
+            break;
+          case 'doctor':
+            navigate('/doctordashboard');
+            break;
+          default:
+            break;
+        }
+      }
+    };
+
+    initializeUserFromStorage();
+  }, []);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -14,31 +53,36 @@ const Login = () => {
       const response = await axios.post("https://medhelp-2.onrender.com/auth/login", {
         username: username,
         password: password,
-        role: role
+        role: role 
       });
-      console.log(response.data.role);
       const { token, userId, role: userRole } = response.data;
 
-      // Store user role in local storage for future use
-      window.localStorage.setItem("token", token);
-      window.localStorage.setItem("userId", userId);
-      window.localStorage.setItem("userRole", userRole);
+      // Store user data in local storage
+      window.localStorage.setItem('token', token);
+      window.localStorage.setItem('userId', userId);
+      window.localStorage.setItem('userRole', userRole);
+      setUserData({
+        id: userId,
+        token: token,
+        role: userRole,
+      });
 
-      // Redirect based on user role
       switch (userRole) {
         case 'admin':
-          navigate('/admindashboard');
+          navigate('/manage');
           break;
         case 'patient':
-          navigate('/');
+          navigate('/patientDashboard');
+          notify();
+          <Toaster/>
           break;
         case 'doctor':
           navigate('/doctordashboard');
           break;
         default:
-          // Handle other roles or no role
           break;
       }
+      // notify();
     } catch (error) {
       console.error("Error logging in:", error);
       // Optionally, you can display an error message to the user
@@ -74,15 +118,15 @@ const Login = () => {
           <select
             id="role"
             value={role}
-            onChange={(e) => setRole(e.target.value)}
+            onChange={(e) => setRole(e.target.value)} // Update role state
             className="mt-1 px-4 py-2 block w-full border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
           >
-            <option value="patient">patient</option>
-            <option value="doctor">doctor</option>
-            <option value="admin">admin</option>
+            <option value="patient">Patient</option>
+            <option value="doctor">Doctor</option>
+            <option value="admin">Admin</option>
           </select>
         </div>
-        <button type="submit" className="bg-indigo-500 text-white px-4 py-2 rounded-md hover:bg-indigo-600 transition-colors duration-300">Login</button>
+        <button type="submit"className="bg-indigo-500 text-white px-4 py-2 rounded-md hover:bg-indigo-600 transition-colors duration-300">Login</button>
       </form>
       <p className="mt-4 text-center text-sm">Don't have an account? <Link to="/register" className="text-indigo-500 font-medium hover:text-indigo-600">Register</Link></p>
     </div>

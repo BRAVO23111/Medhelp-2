@@ -12,6 +12,7 @@ const ViewAppointment = () => {
         const userId = window.localStorage.getItem('userId');
         const response = await axios.get(`https://medhelp-2.onrender.com/appointment/user/${userId}/appointments`);
         setAppointments(response.data);
+        console.log(appointments);
         setLoading(false);
       } catch (error) {
         setError(error.message);
@@ -28,7 +29,7 @@ const ViewAppointment = () => {
   return (
     <div className="container mx-auto">
       <h2 className="text-2xl font-bold mb-4 text-center">Your Appointments</h2>
-      {appointments.length === 0 ? (
+      {appointments && appointments.length === 0 ? (
         <p className="text-center text-gray-600">No appointments scheduled</p>
       ) : (
         <ul>
