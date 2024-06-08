@@ -29,7 +29,7 @@ const Bookappointment = () => {
 
   const fetchPatientDetails = async (userId) => {
     try {
-      const response = await axios.get(`http://localhost:3000/doctors/user/${userId}`);
+      const response = await axios.get(`https://medhelp-2.onrender.com/doctors/user/${userId}`);
       setPatientName(response.data.username); // Assuming the username field contains the patient's name
     } catch (error) {
       console.error("Error fetching patient details:", error);
@@ -39,7 +39,7 @@ const Bookappointment = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      await axios.post("http://localhost:3000/appointment/bookappointment", {
+      await axios.post("https://medhelp-2.onrender.com/appointment/bookappointment", {
         doctorId: actualDoctorId, // Use actualDoctorId
         patientId: patientId, 
         date: new Date(date).toISOString() 
