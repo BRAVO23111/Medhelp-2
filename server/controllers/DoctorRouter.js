@@ -1,64 +1,87 @@
 import express from 'express';
 import { authenticateRole, authMiddleware } from '../middleware/authMiddleware.js';
+import { AppointmentModel } from '../models/AppointmentSchema.js';
 import { DoctorModel } from '../models/Doctor.js';
+import bcrypt from 'bcrypt';
 import { UserModel } from '../models/User.js';
 
 const router = express.Router();
 
-router.get("/",authMiddleware, authenticateRole('patient','admin'), async (req, res) => {
-    try {
-        const doctorList = await DoctorModel.find();
-        res.status(200).json(doctorList); 
-    } catch (error) {
-        res.status(500).json({
-            message: "Internal server error"
-        });
-    }
-});
-router.post("/registerdoctor",authMiddleware,authenticateRole('admin'), async (req, res) => {
-    try {
-        const { username, password, speciality } = req.body;
-        console.log(req.body);
-        const existingDoctor = await DoctorModel.findOne({ username:username });
-        if (existingDoctor) {
-            return res.status(400).json({ message: "Doctor username already exists" });
-        }
-        const newDoctor = new DoctorModel({
-            username: username,
-            password: password,
-            speciality: speciality,
-        });
-        await newDoctor.save();
-        res.status(201).json({ message: "Doctor created successfully" });
-    } catch (error) {
-        res.status(500).json({
-            message: error
-        });
-    }
+// Get list of all doctors (accessible by patients and admins)
+router.get('/', authMiddleware, authenticateRole('patient', 'admin'), async (req, res) => {
+  try {
+    const doctorList = await DoctorModel.find();
+    res.status(200).json(doctorList);
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error' });
+  }
 });
 
-router.get('/user/:userId', async (req, res) => {
-    try {
-        const userId = req.params.userId;
-        console.log(userId);
-        const user = await UserModel.findById(userId);
-        console.log(user);
-        if (!user) {
-            return res.status(404).json({ error: 'User not found' });
-        }
-        res.json(user);
-    } catch (error) {
-        res.status(500).json({ error: 'Internal server error' });
+// Register a new doctor (accessible by admin)
+router.post('/registerdoctor', async (req, res) => {
+  try {
+    const { username, password, speciality } = req.body;
+    const existingDoctor = await DoctorModel.findOne({ username: username });
+    if (existingDoctor) {
+      return res.status(400).json({ message: 'Doctor username already exists' });
     }
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+    const newDoctor = new DoctorModel({
+      username: username,
+      password: hashedPassword,
+      speciality: speciality,
+      role: 'doctor', // Set role to 'doctor'
+    });
+    await newDoctor.save();
+    res.status(201).json({ message: 'Doctor created successfully' });
+  } catch (error) {
+    console.error('Error in doctor registration:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
 });
-router.delete("/:doctorId", authMiddleware, authenticateRole('admin'), async (req, res) => {
-    try {
-      const doctorId = req.params.doctorId;
-      // Find the doctor by ID and delete it from the database
-      await DoctorModel.findByIdAndDelete(doctorId);
-      res.status(200).json({ message: 'Doctor deleted successfully' });
-    } catch (error) {
-      res.status(500).json({ message: 'Internal server error' });
+
+// Get user details by ID
+router.get('/user/:userId', async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const user = await UserModel.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
     }
-  });
+    res.status(200).json(user);
+  } catch (error) {
+    console.error('Error fetching user details:', error); // Logging the error details
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Delete a doctor (accessible by admin)
+router.delete('/:doctorId', authMiddleware, authenticateRole('admin'), async (req, res) => {
+  try {
+    const doctorId = req.params.doctorId;
+    await DoctorModel.findByIdAndDelete(doctorId);
+    res.status(200).json({ message: 'Doctor deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Get appointments for a doctor
+router.get('/appointments', authMiddleware, authenticateRole('doctor'), async (req, res) => {
+  try {
+    const doctorId = req.user._id;
+    const appointments = await AppointmentModel.find({
+      doctor: doctorId,
+      date: { $gte: new Date() }
+    }).populate('doctor patient');
+    if (!appointments) {
+      return res.status(404).json({ error: 'No appointments found for this doctor' });
+    }
+    res.json(appointments);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 export { router as DoctorRouter };

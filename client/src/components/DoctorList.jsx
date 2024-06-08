@@ -2,15 +2,17 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import { selectedDoctorIdState } from '../atoms/Doctoratom.js';
+import { selectedDoctorIdState } from '../atoms/Doctoratom';
 import Navbar from './Navbar'; // Import Navbar component
 
 const DoctorList = () => {
   const [doctors, setDoctors] = useState([]);
+  const [filteredDoctors, setFilteredDoctors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [user, setUser] = useState(null); // New state to store user details
   const [isLoggedIn, setIsLoggedIn] = useState(!!window.localStorage.getItem("userId"));
+  const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
   const [selectedDoctorId, setSelectedDoctorId] = useRecoilState(selectedDoctorIdState);
 
@@ -18,7 +20,7 @@ const DoctorList = () => {
     const fetchUserDetails = async () => {
       try {
         const userId = window.localStorage.getItem("userId");
-        const response = await axios.get(`https://medhelp-2.onrender.com/doctors/user/${userId}`, {
+        const response = await axios.get(`http://localhost:3000/doctors/user/${userId}`, {
           headers: {
             Authorization: `Bearer ${window.localStorage.getItem('token')}`
           }
@@ -31,12 +33,13 @@ const DoctorList = () => {
 
     const fetchDoctors = async () => {
       try {
-        const response = await axios.get("https://medhelp-2.onrender.com/doctors", {
+        const response = await axios.get("http://localhost:3000/doctors", {
           headers: {
             Authorization: `Bearer ${window.localStorage.getItem('token')}`
           }
         });
         setDoctors(response.data);
+        setFilteredDoctors(response.data); // Initialize filteredDoctors with all doctors
         setLoading(false);
       } catch (error) {
         setError(error.message);
@@ -65,7 +68,6 @@ const DoctorList = () => {
           break;
         case 'patient':
           // Do nothing if the user is a patient
-          navigate('/patientDashboard')
           break;
         case 'doctor':
           navigate('/doctordashboard');
@@ -75,6 +77,15 @@ const DoctorList = () => {
       }
     }
   }, [user, navigate]);
+
+  useEffect(() => {
+    // Filter doctors based on the search term
+    setFilteredDoctors(
+      doctors.filter(doctor =>
+        doctor.username.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    );
+  }, [searchTerm, doctors]);
 
   if (!isLoggedIn || (user && user.role !== 'patient')) {
     // Redirect to login or show message if the user is not logged in or not a patient
@@ -98,21 +109,40 @@ const DoctorList = () => {
   return (
     <div>
       {/* <Navbar isLoggedIn={isLoggedIn} setUser={setUser} /> */}
-      <div className="container mx-auto">
-        <h2 className="text-2xl font-bold mb-4">Hi {user ? user.username : ''}, these are the doctors available</h2>
-        <ul>
-          {doctors.map((doctor) => (
-            <li key={doctor._id} className="border-b border-gray-200 py-4 flex justify-between items-center">
-              <div>
-                <h3 className="text-lg font-semibold">{doctor.username}</h3>
-                <p className="text-gray-600">{doctor.speciality}</p>
+      <div className="container mx-auto mt-8">
+        <h2 className="text-3xl font-bold mb-6 text-center">Hi {user ? user.username : ''}, these are the doctors available</h2>
+        
+        {/* Search Bar */}
+        <div className="mb-6 flex justify-center">
+          <input
+            type="text"
+            placeholder="Search doctors..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-1/2 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+          {filteredDoctors.map((doctor) => (
+            <div key={doctor._id} className="border rounded-lg p-6 shadow-lg bg-white">
+              <div className="flex flex-col items-center">
+                <img src="https://i.postimg.cc/KjbvHv8F/asset1.jpg" alt={doctor.username} className="w-24 h-24 rounded-full mb-4" />
+                <h3 className="text-lg font-semibold mb-2">{doctor.username}</h3>
+                <p className="text-gray-600 mb-2">{doctor.speciality}</p>
               </div>
               {isLoggedIn && (
-                <button onClick={() => bookAppointment(doctor._id)} className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Book Now →</button>
+               <button
+               onClick={() => bookAppointment(doctor._id)}
+               className="mt-4 w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex justify-center items-center transition-all duration-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+             >
+               Book Now →
+             </button>
+              
               )}
-            </li>
+            </div>
           ))}
-        </ul>
+        </div>
       </div>
     </div>
   );

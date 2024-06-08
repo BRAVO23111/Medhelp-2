@@ -4,6 +4,8 @@ import cors from 'cors'
 import dotenv from 'dotenv';
 import { userRouter } from './controllers/AuthController.js';
 import { DoctorRouter } from './controllers/DoctorRouter.js';
+// import { AppointmentRouter } from './controllers/AppointmentRouter.js';
+import setupCleanupJob from './middleware/cleanup.js';
 import { AppointmentRouter } from './controllers/AppointmentRouter.js';
 
 dotenv.config();
@@ -19,7 +21,7 @@ try {
 
 const app = express();
 app.use(cors({
-    origin : ["https://medhelp-v1.vercel.app"],
+    origin : ["http://localhost:5173"],
     methods : ["GET", "POST" ,"PUT","DELETE"],
     credentials :true
 }));
@@ -29,6 +31,8 @@ app.use(express.json())
 app.use("/auth",userRouter)
 app.use("/doctors",DoctorRouter)
 app.use("/appointment",AppointmentRouter)
+
+setupCleanupJob();
 
 
 app.listen(3000,(req,res)=>{

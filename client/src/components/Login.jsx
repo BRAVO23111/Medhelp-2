@@ -4,7 +4,6 @@ import { useSetRecoilState } from 'recoil';
 import { Link, useNavigate } from 'react-router-dom';
 import { userState } from '../atoms/Doctoratom'; 
 import toast, { Toaster } from 'react-hot-toast';
-// Assuming you have a userState Recoil atom
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -12,7 +11,7 @@ const Login = () => {
   const [role, setRole] = useState('patient'); // Define role state
   const setUserData = useSetRecoilState(userState);
   const navigate = useNavigate();
-  const notify = () => toast('Logged in. Please Refresh to see changes ');
+  const notify = () => toast('Logged in successfully');
 
   useEffect(() => {
     const initializeUserFromStorage = () => {
@@ -45,12 +44,12 @@ const Login = () => {
     };
 
     initializeUserFromStorage();
-  }, []);
+  }, [setUserData, navigate]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await axios.post("https://medhelp-2.onrender.com/auth/login", {
+      const response = await axios.post("http://localhost:3000/auth/login", {
         username: username,
         password: password,
         role: role 
@@ -67,14 +66,14 @@ const Login = () => {
         role: userRole,
       });
 
+      notify();
+
       switch (userRole) {
         case 'admin':
           navigate('/manage');
           break;
         case 'patient':
           navigate('/patientDashboard');
-          notify();
-          <Toaster/>
           break;
         case 'doctor':
           navigate('/doctordashboard');
@@ -82,10 +81,9 @@ const Login = () => {
         default:
           break;
       }
-      // notify();
     } catch (error) {
       console.error("Error logging in:", error);
-      // Optionally, you can display an error message to the user
+      toast.error('Login failed. Please check your credentials.');
     }
   };
 
@@ -129,6 +127,7 @@ const Login = () => {
         <button type="submit"className="bg-indigo-500 text-white px-4 py-2 rounded-md hover:bg-indigo-600 transition-colors duration-300">Login</button>
       </form>
       <p className="mt-4 text-center text-sm">Don't have an account? <Link to="/register" className="text-indigo-500 font-medium hover:text-indigo-600">Register</Link></p>
+      <Toaster />
     </div>
   );
 };

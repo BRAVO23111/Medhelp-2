@@ -5,7 +5,12 @@ export const selectedDoctorIdState = atom({
   key: 'selectedDoctorId',
   default: null,
 });
+
 export const userState = atom({
   key: 'userState',
-  default: null,
+  default: {
+    id: '',
+    token: '',
+    role: '',
+  },
 });

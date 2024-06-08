@@ -2,6 +2,8 @@ import express from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { UserModel } from "../models/User.js";
+import { DoctorModel } from "../models/Doctor.js";
+
 
 const router = express.Router();
 const secret = "mysecret";
@@ -27,11 +29,14 @@ router.post("/register", async (req, res) => {
 
 router.post("/login", async (req, res) => {
   try {
-    const { username, password ,role} = req.body;
-    const user = await UserModel.findOne({ username });
+    const { username, password } = req.body;
+    let user = await UserModel.findOne({ username });
 
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      user = await DoctorModel.findOne({ username });
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
@@ -39,20 +44,28 @@ router.post("/login", async (req, res) => {
       return res.status(401).json({ message: "Incorrect password" });
     }
 
+    let role;
+    if (user instanceof UserModel) {
+      role = user.role;
+    } else {
+      role = user.role; // This should now correctly get the 'doctor' role
+    }
+
     const token = jwt.sign(
       {
         userId: user._id,
-        role: user.role // Include 'role' in the JWT payload
+        role: role // Include 'role' in the JWT payload
       },
       secret
     );
 
     // Return token and user's role
-    res.json({ token, userId: user._id, role: user.role });
+    res.json({ token, userId: user._id, role: role });
   } catch (error) {
     console.error("Error in login:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 });
+
 
 export { router as userRouter };

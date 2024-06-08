@@ -10,9 +10,9 @@ const ViewAppointment = () => {
     const fetchAppointments = async () => {
       try {
         const userId = window.localStorage.getItem('userId');
-        const response = await axios.get(`https://medhelp-2.onrender.com/appointment/user/${userId}/appointments`);
-        setAppointments(response.data);
-        console.log(appointments);
+        const response = await axios.get(`http://localhost:3000/appointment/user/${userId}/appointments`);
+        const currentAppointments = response.data.filter(appointment => new Date(appointment.date) >= new Date());
+        setAppointments(currentAppointments);
         setLoading(false);
       } catch (error) {
         setError(error.message);
@@ -27,22 +27,21 @@ const ViewAppointment = () => {
   if (error) return <div className="text-center mt-8">Error: {error}</div>;
 
   return (
-    <div className="container mx-auto">
-      <h2 className="text-2xl font-bold mb-4 text-center">Your Appointments</h2>
+    <div className="container mx-auto px-4">
+      <h2 className="text-3xl font-bold mb-6 text-center">Your Appointments</h2>
       {appointments && appointments.length === 0 ? (
         <p className="text-center text-gray-600">No appointments scheduled</p>
       ) : (
-        <ul>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {appointments.map((appointment) => (
-            <li key={appointment._id} className="border-b border-gray-200 py-4">
-              <div>
-                <p className="text-lg font-semibold">Doctor: {appointment.doctor.username}</p>
-                <p className="text-gray-600">Speciality: {appointment.doctor.speciality}</p>
-                <p className="text-gray-600">Date: {appointment.date}</p>
-              </div>
-            </li>
+            <div key={appointment._id} className="border rounded-lg p-4 shadow-lg bg-white">
+              <h3 className="text-xl font-semibold mb-2">Doctor: {appointment.doctor.username}</h3>
+              <p className="text-gray-600 mb-1"><strong>Speciality:</strong> {appointment.doctor.speciality}</p>
+              <p className="text-gray-600 mb-1"><strong>Patient:</strong> {appointment.patient.username}</p>
+              <p className="text-gray-600 mb-1"><strong>Date:</strong> {new Date(appointment.date).toLocaleDateString()}</p>
+            </div>
           ))}
-        </ul>
+        </div>
       )}
     </div>
   );
