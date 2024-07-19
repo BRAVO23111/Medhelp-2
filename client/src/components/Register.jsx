@@ -12,7 +12,7 @@ const Register = () => {
     event.preventDefault();
     console.log(role);
     try {
-      const response = await axios.post("http://localhost:3000/auth/register", {
+      const response = await axios.post("https://medhelp-2.onrender.com/auth/register", {
         username: username,
         password: password,
         role: role // Include the selected role in the registration request

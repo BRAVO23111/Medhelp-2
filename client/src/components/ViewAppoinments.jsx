@@ -10,7 +10,7 @@ const ViewAppointment = () => {
     const fetchAppointments = async () => {
       try {
         const userId = window.localStorage.getItem('userId');
-        const response = await axios.get(`http://localhost:3000/appointment/user/${userId}/appointments`);
+        const response = await axios.get(`https://medhelp-2.onrender.com/appointment/user/${userId}/appointments`);
         const currentAppointments = response.data.filter(appointment => new Date(appointment.date) >= new Date());
         setAppointments(currentAppointments);
         setLoading(false);
