@@ -21,7 +21,7 @@ try {
 
 const app = express();
 app.use(cors({
-    origin : ["https://medhelp-v1.vercel.app/"],
+    origin : ["https://medhelp-v1.vercel.app"],
     methods : ["GET", "POST" ,"PUT","DELETE"],
     credentials :true
 }));
