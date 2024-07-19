@@ -14,29 +14,18 @@ const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    const userRoleFromStorage = window.localStorage.getItem('userRole');
-    const token = window.localStorage.getItem('token');
-    if (userRoleFromStorage && token) {
-      setUser({
-        isLoggedIn: true,
-        userRole: userRoleFromStorage,
-      });
-    }
-
-    const handleStorageChange = () => {
-      const updatedUserRole = window.localStorage.getItem('userRole');
-      const updatedToken = window.localStorage.getItem('token');
-      setUser({
-        isLoggedIn: !!updatedUserRole && !!updatedToken,
-        userRole: updatedUserRole || '',
-      });
+    const initializeUserFromStorage = () => {
+      const userRoleFromStorage = window.localStorage.getItem('userRole');
+      const token = window.localStorage.getItem('token');
+      if (userRoleFromStorage && token) {
+        setUser({
+          isLoggedIn: true,
+          userRole: userRoleFromStorage,
+        });
+      }
     };
 
-    window.addEventListener('storage', handleStorageChange);
-
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
+    initializeUserFromStorage();
   }, [setUser]);
 
   const handleLogout = () => {

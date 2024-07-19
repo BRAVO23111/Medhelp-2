@@ -21,15 +21,16 @@ const Login = () => {
 
       if (token && userId && userRole) {
         setUserData({
+          isLoggedIn: true,
           id: userId,
           token: token,
-          role: userRole,
+          userRole: userRole,
         });
 
         // Redirect to appropriate page based on role
         switch (userRole) {
           case 'admin':
-            navigate('/admindashboard');
+            navigate('/manage');
             break;
           case 'patient':
             navigate('/patientDashboard');
@@ -49,7 +50,7 @@ const Login = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await axios.post("https://medhelp-2.onrender.com/auth/login", {
+      const response = await axios.post("http://localhost:3000/auth/login", {
         username: username,
         password: password,
         role: role 
@@ -61,9 +62,10 @@ const Login = () => {
       window.localStorage.setItem('userId', userId);
       window.localStorage.setItem('userRole', userRole);
       setUserData({
+        isLoggedIn: true,
         id: userId,
         token: token,
-        role: userRole,
+        userRole: userRole,
       });
 
       notify();
@@ -124,7 +126,7 @@ const Login = () => {
             <option value="admin">Admin</option>
           </select>
         </div>
-        <button type="submit"className="bg-indigo-500 text-white px-4 py-2 rounded-md hover:bg-indigo-600 transition-colors duration-300">Login</button>
+        <button type="submit" className="bg-indigo-500 text-white px-4 py-2 rounded-md hover:bg-indigo-600 transition-colors duration-300">Login</button>
       </form>
       <p className="mt-4 text-center text-sm">Don't have an account? <Link to="/register" className="text-indigo-500 font-medium hover:text-indigo-600">Register</Link></p>
       <Toaster />

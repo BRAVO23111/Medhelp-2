@@ -4,7 +4,7 @@ import { useSpring, animated } from 'react-spring';
 
 const HomePage = () => {
   const navigate = useNavigate();
-
+  
   const fadeIn = useSpring({
     opacity: 1,
     from: { opacity: 0 },

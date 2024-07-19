@@ -33,7 +33,7 @@ const DoctorList = () => {
 
     const fetchDoctors = async () => {
       try {
-        const response = await axios.get("https://medhelp-2.onrender.com/doctors", {
+        const response = await axios.get("http://localhost:3000/doctors", {
           headers: {
             Authorization: `Bearer ${window.localStorage.getItem('token')}`
           }
