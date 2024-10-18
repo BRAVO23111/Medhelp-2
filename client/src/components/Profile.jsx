@@ -19,7 +19,7 @@ const CreateProfile = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/profile', {
+        const response = await axios.get('https://medhelp-2.onrender.com/profile', {
           headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
         });
         if (response.data) {
@@ -47,7 +47,7 @@ const CreateProfile = () => {
       if (profile && !appointmentsLoaded) {
         try {
           const userId = localStorage.getItem('userId');
-          const response = await axios.get(`http://localhost:3000/appointment/user/${userId}/appointments`, {
+          const response = await axios.get(`https://medhelp-2.onrender.com/appointment/user/${userId}/appointments`, {
             headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
           });
           setAppointments(response.data);
@@ -64,7 +64,7 @@ const CreateProfile = () => {
    const  fetchProfile  =  async()=>{
     try {
       const userId = localStorage.getItem('userId');
-      const response = await axios.get(`http://localhost:3000/profile/${userId}`, {
+      const response = await axios.get(`https://medhelp-2.onrender.com/profile/${userId}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
           'Content-Type': 'application/json'
@@ -85,7 +85,7 @@ const CreateProfile = () => {
     const profileData = { name, age, contact, medicalHistory };
 
     try {
-      const response = await axios.post('http://localhost:3000/profile', profileData, {
+      const response = await axios.post('https://medhelp-2.onrender.com/profile', profileData, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -120,7 +120,7 @@ const CreateProfile = () => {
     const updatedProfileData = { name, age, contact, medicalHistory };
 
     try {
-      const response = await axios.put('http://localhost:3000/profile', updatedProfileData, {
+      const response = await axios.put('https://medhelp-2.onrender.com/profile', updatedProfileData, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('token')}`

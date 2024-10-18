@@ -15,7 +15,7 @@ const ManageDoctors = () => {
         return;
       }
       
-      const response = await axios.get("http://localhost:3000/doctors", {
+      const response = await axios.get("https://medhelp-2.onrender.com/doctors", {
         headers: {
           Authorization: `Bearer ${token}`
         }

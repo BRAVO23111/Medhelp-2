@@ -12,7 +12,7 @@ const ViewAppointment = () => {
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
-        const response = await fetch('http://localhost:3000/appointment/user/appointments', {
+        const response = await fetch('https://medhelp-2.onrender.com/appointment/user/appointments', {
           headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
         });
         const data = await response.json();

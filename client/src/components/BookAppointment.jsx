@@ -30,7 +30,7 @@ const Bookappointment = () => {
   const fetchPatientDetails = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:3000/profile', {
+      const response = await axios.get('http://https://medhelp-2.onrender.com/profile', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -53,7 +53,7 @@ const Bookappointment = () => {
     setError('');
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.post("http://localhost:3000/appointment/bookappointment", 
+      const response = await axios.post("https://medhelp-2.onrender.com/appointment/bookappointment", 
         {
           doctorId: actualDoctorId,
           patientId: patientId,
