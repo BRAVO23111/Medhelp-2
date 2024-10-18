@@ -14,7 +14,12 @@ const AppointmentSchema = new mongoose.Schema({
     date: {
         type: Date,
         required: true
-    },
+    }
 });
+
+// Ensure indexes for faster query performance
+AppointmentSchema.index({ date: 1 });
+AppointmentSchema.index({ doctor: 1 });
+AppointmentSchema.index({ patient: 1 });
 
 export const AppointmentModel = mongoose.model("Appointment", AppointmentSchema);

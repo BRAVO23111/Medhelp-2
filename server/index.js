@@ -7,6 +7,7 @@ import { DoctorRouter } from './controllers/DoctorRouter.js';
 // import { AppointmentRouter } from './controllers/AppointmentRouter.js';
 import setupCleanupJob from './middleware/cleanup.js';
 import { AppointmentRouter } from './controllers/AppointmentRouter.js';
+import { ProfileRouter } from './controllers/ProfileRouter.js';
 
 dotenv.config();
 
@@ -21,7 +22,7 @@ try {
 
 const app = express();
 app.use(cors({
-    origin : ["https://medhelp-v1.vercel.app"],
+    origin : ["http://localhost:5173"],
     methods : ["GET", "POST" ,"PUT","DELETE"],
     credentials :true
 }));
@@ -31,6 +32,7 @@ app.use(express.json())
 app.use("/auth",userRouter)
 app.use("/doctors",DoctorRouter)
 app.use("/appointment",AppointmentRouter)
+app.use("/profile", ProfileRouter)
 
 setupCleanupJob();
 

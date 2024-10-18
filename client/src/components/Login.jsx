@@ -50,7 +50,7 @@ const Login = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await axios.post("https://medhelp-2.onrender.com/auth/login", {
+      const response = await axios.post("http://localhost:3000/auth/login", {
         username: username,
         password: password,
         role: role 
@@ -75,7 +75,7 @@ const Login = () => {
           navigate('/manage');
           break;
         case 'patient':
-          navigate('/patientDashboard');
+          navigate('/profile');
           break;
         case 'doctor':
           navigate('/doctordashboard');

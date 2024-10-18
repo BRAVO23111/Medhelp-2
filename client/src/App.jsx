@@ -15,6 +15,7 @@ import ManageDoctors from './components/MangeDoctor';
 import HomePage from './components/Home';
 import PatientDashboard from './components/PatientDashboard';
 import toast, { Toaster } from 'react-hot-toast';
+import Profile from './components/Profile';
 
 
 function App() {
@@ -60,6 +61,7 @@ function App() {
             <Route path='/doctordashboard' element={<Doctordashboard />} />
             <Route path='/adddoctor' element={<AddDoctor />} />
             <Route path='/manage' element={<ManageDoctors />} />
+            <Route path='/profile' element={<Profile />} />
           </Routes>
         </div>
       </Router>

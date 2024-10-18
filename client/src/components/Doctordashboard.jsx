@@ -17,7 +17,7 @@ const DoctorDashboard = () => {
           return;
         }
 
-        const response = await axios.get(`https://medhelp-2.onrender.com/appointment/${doctorId}/appointments`);
+        const response = await axios.get(`http://localhost:3000/appointment/${doctorId}/appointments`);
         const currentAppointments = response.data.filter(appointment => new Date(appointment.date) >= new Date());
 
         setAppointments(currentAppointments);

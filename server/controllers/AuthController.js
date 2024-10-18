@@ -4,22 +4,33 @@ import jwt from "jsonwebtoken";
 import { UserModel } from "../models/User.js";
 import { DoctorModel } from "../models/Doctor.js";
 
-
 const router = express.Router();
-const secret = "mysecret";
+const secret =  "mysecret"; // Store secret in environment variable
 
+// Registration route
 router.post("/register", async (req, res) => {
-  console.log(req.body.role);
   try {
-    const { username, password, role } = req.body; // Include 'role' in the request body
-    const existingUser = await UserModel.findOne({ username: username });
+    const { username, password, role } = req.body;
+
+    // Validate request body
+    if (!username || !password || !role) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    // Check if the user already exists
+    const existingUser = await UserModel.findOne({ username });
     if (existingUser) {
       return res.status(400).json({ message: "Username already exists" });
     }
+
+    // Hash password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-    const newUser = new UserModel({ username, password: hashedPassword, role }); // Save 'role' to the database
+
+    // Create new user
+    const newUser = new UserModel({ username, password: hashedPassword, role });
     await newUser.save();
+
     res.status(201).json({ message: "User created successfully" });
   } catch (error) {
     console.error("Error in registration:", error);
@@ -27,45 +38,40 @@ router.post("/register", async (req, res) => {
   }
 });
 
+// Login route
 router.post("/login", async (req, res) => {
   try {
     const { username, password } = req.body;
-    let user = await UserModel.findOne({ username });
 
-    if (!user) {
-      user = await DoctorModel.findOne({ username });
-      if (!user) {
-        return res.status(404).json({ message: "User not found" });
-      }
+    // Validate request body
+    if (!username || !password) {
+      return res.status(400).json({ message: "Username and password are required" });
     }
 
+    // Find user in both User and Doctor collections
+    let user = await UserModel.findOne({ username }) || await DoctorModel.findOne({ username });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Compare passwords
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) {
       return res.status(401).json({ message: "Incorrect password" });
     }
 
-    let role;
-    if (user instanceof UserModel) {
-      role = user.role;
-    } else {
-      role = user.role; // This should now correctly get the 'doctor' role
-    }
+    // Get user role
+    const role = user instanceof UserModel ? user.role : user.role;
 
-    const token = jwt.sign(
-      {
-        userId: user._id,
-        role: role // Include 'role' in the JWT payload
-      },
-      secret
-    );
+    // Generate JWT token
+    const token = jwt.sign({ userId: user._id, role }, secret, { expiresIn: '1h' });
 
-    // Return token and user's role
-    res.json({ token, userId: user._id, role: role });
+    res.json({ token, userId: user._id, role });
   } catch (error) {
     console.error("Error in login:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 });
-
 
 export { router as userRouter };

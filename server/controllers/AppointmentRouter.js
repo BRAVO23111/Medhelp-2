@@ -1,4 +1,5 @@
 import express from 'express';
+import { authMiddleware } from '../middleware/authMiddleware.js';
 import { AppointmentModel } from '../models/AppointmentSchema.js';
 import { DoctorModel } from '../models/Doctor.js';
 import { UserModel } from '../models/User.js'; // Import UserModel to get user details
@@ -9,7 +10,6 @@ const router = express.Router();
 router.post("/bookappointment", async (req, res) => {
     try {
         const { doctorId, patientId, date } = req.body;
-
         const newAppointment = new AppointmentModel({
             doctor: doctorId,
             patient: patientId,
@@ -17,10 +17,10 @@ router.post("/bookappointment", async (req, res) => {
         });
         await newAppointment.save();
 
-        // Add the appointment to the patient's appointments array
+
         await DoctorModel.findByIdAndUpdate(doctorId, {
-            // $push: { appointments: newAppointment._id },
-            $addToSet: { appointments: patientId }
+            $push: { appointments: newAppointment._id },
+            $push: { appointments: patientId }
         });
 
         console.log(newAppointment); // Log appointment details
@@ -42,9 +42,9 @@ router.get("/appointments", async (req, res) => {
 });
 
 // Get appointments by user ID
-router.get('/user/:userId/appointments', async (req, res) => {
+router.get('/user/appointments',authMiddleware, async (req, res) => {
     try {
-        const userId = req.params.userId;
+        const userId = req.user
         const appointments = await AppointmentModel.find({
             patient: userId,
             date: { $gte: new Date() }
