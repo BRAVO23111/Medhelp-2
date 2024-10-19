@@ -5,13 +5,24 @@ import { Link, useNavigate } from 'react-router-dom';
 import { userState } from '../atoms/Doctoratom'; 
 import toast, { Toaster } from 'react-hot-toast';
 
+// Import the config
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState('patient'); // Define role state
+  const [role, setRole] = useState('patient');
   const setUserData = useSetRecoilState(userState);
   const navigate = useNavigate();
   const notify = () => toast('Logged in successfully');
+
+  // Create axios instance with base configuration
+  const api = axios.create({
+    baseURL: BASE_URL,
+    withCredentials: true,
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
 
   useEffect(() => {
     const initializeUserFromStorage = () => {
@@ -27,7 +38,7 @@ const Login = () => {
           userRole: userRole,
         });
 
-        // Redirect to appropriate page based on role
+        // Redirect based on role
         switch (userRole) {
           case 'admin':
             navigate('/manage');
@@ -50,17 +61,20 @@ const Login = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await axios.post("https://medhelp-2.onrender.com/auth/login", {
+      // Use the BASE_URL instead of hardcoded URL
+      const response = await api.post("/auth/login", {
         username: username,
         password: password,
         role: role 
       });
+      
       const { token, userId, role: userRole } = response.data;
 
       // Store user data in local storage
       window.localStorage.setItem('token', token);
       window.localStorage.setItem('userId', userId);
       window.localStorage.setItem('userRole', userRole);
+      
       setUserData({
         isLoggedIn: true,
         id: userId,
@@ -118,7 +132,7 @@ const Login = () => {
           <select
             id="role"
             value={role}
-            onChange={(e) => setRole(e.target.value)} // Update role state
+            onChange={(e) => setRole(e.target.value)}
             className="mt-1 px-4 py-2 block w-full border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
           >
             <option value="patient">Patient</option>

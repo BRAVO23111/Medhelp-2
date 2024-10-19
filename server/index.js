@@ -21,8 +21,14 @@ try {
 }
 
 const app = express();
+
+// if (process.env.NODE_ENV === 'production') {
+//     dotenv.config({ path: '.env.production' });
+// } else {
+//     dotenv.config({ path: '.env' });
+// }
 app.use(cors({
-    origin : ["https://medhelp-v1.vercel.app"],
+    origin : process.env.VITE_URL || 'http://localhost:5173',
     methods : ["GET", "POST" ,"PUT","DELETE"],
     credentials :true
 }));

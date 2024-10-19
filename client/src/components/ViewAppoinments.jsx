@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FaUserMd, FaUser } from 'react-icons/fa';
 import { BsCalendarEvent, BsClock } from 'react-icons/bs';
 import { MdOutlineVerified } from 'react-icons/md';
+import api from '../config/config';
 
 const ViewAppointment = () => {
   const [appointments, setAppointments] = useState([]);
@@ -12,21 +13,25 @@ const ViewAppointment = () => {
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
-        const response = await fetch('https://medhelp-2.onrender.com/appointment/user/appointments', {
-          headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+        const response = await api.get('/appointment/user/appointments', {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         });
-        const data = await response.json();
-        const currentAppointments = data.filter(appointment => 
-          new Date(appointment.date) >= new Date()
+        
+        if (response.status !== 200) {
+          throw new Error('Failed to fetch appointments');
+        }
+  
+        const currentAppointments = response.data.filter(
+          (appointment) => new Date(appointment.date) >= new Date()
         );
         setAppointments(currentAppointments);
-        setLoading(false);
       } catch (error) {
         setError(error.message);
+      } finally {
         setLoading(false);
       }
     };
-
+  
     fetchAppointments();
   }, []);
 

@@ -3,7 +3,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { selectedDoctorIdState } from '../atoms/Doctoratom';
 import { FaCalendarAlt, FaClock } from 'react-icons/fa';
-import axios from 'axios';
+
+import api from '../config/config';
 
 const Bookappointment = () => {
   const [patientId, setPatientId] = useState('');
@@ -30,7 +31,7 @@ const Bookappointment = () => {
   const fetchPatientDetails = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get('http://https://medhelp-2.onrender.com/profile', {
+      const response = await api.get('/profile', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -53,7 +54,7 @@ const Bookappointment = () => {
     setError('');
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.post("https://medhelp-2.onrender.com/appointment/bookappointment", 
+      const response = await api.post("/appointment/bookappointment", 
         {
           doctorId: actualDoctorId,
           patientId: patientId,

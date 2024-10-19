@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { selectedDoctorIdState } from '../atoms/Doctoratom';
 import { motion } from 'framer-motion';
 import { FaSearch, FaUserMd } from 'react-icons/fa';
+import api from '../config/config';
 
 const DoctorList = () => {
   const [doctors, setDoctors] = useState([]);
@@ -16,12 +16,11 @@ const DoctorList = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
   const [selectedDoctorId, setSelectedDoctorId] = useRecoilState(selectedDoctorIdState);
-
   useEffect(() => {
     const fetchUserDetails = async () => {
       try {
         const userId = window.localStorage.getItem("userId");
-        const response = await axios.get(`https://medhelp-2.onrender.com/doctors/user/${userId}`, {
+        const response = await api.get(`/doctors/user/${userId}`, {
           headers: {
             Authorization: `Bearer ${window.localStorage.getItem('token')}`
           }
@@ -34,7 +33,7 @@ const DoctorList = () => {
 
     const fetchDoctors = async () => {
       try {
-        const response = await axios.get("https://medhelp-2.onrender.com/doctors", {
+        const response = await api.get("/doctors", {
           headers: {
             Authorization: `Bearer ${window.localStorage.getItem('token')}`
           }

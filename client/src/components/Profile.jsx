@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { FaUser, FaCalendar, FaPhone, FaNotesMedical, FaEdit, FaSave, FaPlus } from 'react-icons/fa';
+import api from '../config/config';
 
 const CreateProfile = () => {
   const navigate = useNavigate();
@@ -15,11 +15,12 @@ const CreateProfile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [appointments, setAppointments] = useState([]);
   const [appointmentsLoaded, setAppointmentsLoaded] = useState(false);
-
+  const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+  console.log(import.meta.env.MODE);
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get('https://medhelp-2.onrender.com/profile', {
+        const response = await api.get('/profile', {
           headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
         });
         if (response.data) {
@@ -47,7 +48,7 @@ const CreateProfile = () => {
       if (profile && !appointmentsLoaded) {
         try {
           const userId = localStorage.getItem('userId');
-          const response = await axios.get(`https://medhelp-2.onrender.com/appointment/user/${userId}/appointments`, {
+          const response = await api.get(`/appointment/user/${userId}/appointments`, {
             headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
           });
           setAppointments(response.data);
@@ -64,7 +65,7 @@ const CreateProfile = () => {
    const  fetchProfile  =  async()=>{
     try {
       const userId = localStorage.getItem('userId');
-      const response = await axios.get(`https://medhelp-2.onrender.com/profile/${userId}`, {
+      const response = await api.get(`/profile/${userId}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
           'Content-Type': 'application/json'
@@ -85,7 +86,7 @@ const CreateProfile = () => {
     const profileData = { name, age, contact, medicalHistory };
 
     try {
-      const response = await axios.post('https://medhelp-2.onrender.com/profile', profileData, {
+      const response = await api.post('/profile', profileData, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -120,7 +121,7 @@ const CreateProfile = () => {
     const updatedProfileData = { name, age, contact, medicalHistory };
 
     try {
-      const response = await axios.put('https://medhelp-2.onrender.com/profile', updatedProfileData, {
+      const response = await api.put('/profile', updatedProfileData, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('token')}`

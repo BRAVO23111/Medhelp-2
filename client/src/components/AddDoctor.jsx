@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Navigate, useNavigate } from 'react-router-dom';
+import api from '../config/config';
 
 const AddDoctor = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [speciality, setSpeciality] = useState('');
+  const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
     const navigate = useNavigate()
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -15,7 +17,7 @@ const AddDoctor = () => {
       const token = window.localStorage.getItem("token");
 
       // Send the request to register a new doctor with authorization header
-      const response = await axios.post(' https://medhelp-2.onrender.com/doctors/registerdoctor', {
+      const response = await api.post('doctors/registerdoctor', {
         username: username,
         password: password,
         speciality: speciality,

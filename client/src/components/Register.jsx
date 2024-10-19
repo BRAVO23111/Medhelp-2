@@ -7,12 +7,20 @@ const Register = () => {
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('patient'); // Default role is 'patient'
   const navigate = useNavigate();
-  
+  const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+  console.log(import.meta.env.MODE);
+  const api = axios.create({
+    baseURL: BASE_URL,
+    withCredentials: true,
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
   const handleSubmit = async (event) => {
     event.preventDefault();
     console.log(role);
     try {
-      const response = await axios.post("https://medhelp-2.onrender.com/auth/register", {
+      const response = await api.post("/auth/register", {
         username: username,
         password: password,
         role: role // Include the selected role in the registration request
