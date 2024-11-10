@@ -72,6 +72,7 @@ const Navbar = () => {
                   <>
                     <NavItem to="/bookappointment" icon={FaCalendarAlt}>Book Appointment</NavItem>
                     <NavItem to="/viewappointments" icon={FaCalendarAlt}>My Appointments</NavItem>
+                    <NavItem to="/prescriptions" icon={FaUser}>Prescriptions</NavItem>
                     <NavItem to="/profile" icon={FaUser}>Profile</NavItem>
                   </>
                 )}

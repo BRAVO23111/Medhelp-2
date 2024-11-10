@@ -38,6 +38,7 @@ const DoctorList = () => {
             Authorization: `Bearer ${window.localStorage.getItem('token')}`
           }
         });
+        console.log(response.data);
         setDoctors(response.data);
         setFilteredDoctors(response.data);
         setLoading(false);

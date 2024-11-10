@@ -1,16 +1,23 @@
 import express from 'express';
 import mongoose from 'mongoose';
-import cors from 'cors'
+import cors from 'cors';
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { userRouter } from './controllers/AuthController.js';
 import { DoctorRouter } from './controllers/DoctorRouter.js';
-// import { AppointmentRouter } from './controllers/AppointmentRouter.js';
-import setupCleanupJob from './middleware/cleanup.js';
 import { AppointmentRouter } from './controllers/AppointmentRouter.js';
+import setupCleanupJob from './middleware/cleanup.js';
 import { ProfileRouter } from './controllers/ProfileRouter.js';
+import { PrescriptionRouter } from './controllers/PrescriptionRouter.js';
+
+// ES module dirname setup
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 dotenv.config();
 
+// Database connection
 const db = mongoose.connect(process.env.MONGO_URI)
 try {
     if(db){
@@ -22,27 +29,36 @@ try {
 
 const app = express();
 
-// if (process.env.NODE_ENV === 'production') {
-//     dotenv.config({ path: '.env.production' });
-// } else {
-//     dotenv.config({ path: '.env' });
-// }
+// CORS configuration
 app.use(cors({
-    origin : process.env.VITE_URL || 'http://localhost:5173',
-    methods : ["GET", "POST" ,"PUT","DELETE"],
-    credentials :true
+    origin: process.env.VITE_URL || 'http://localhost:5173/',
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true
 }));
-app.use(express.json())
 
-//ROUTES
-app.use("/auth",userRouter)
-app.use("/doctors",DoctorRouter)
-app.use("/appointment",AppointmentRouter)
-app.use("/profile", ProfileRouter)
+// Middleware
+app.use(express.json());
+
+// Serve static files from uploads directory
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Create uploads directory if it doesn't exist
+import fs from 'fs';
+const uploadDir = path.join(__dirname, 'uploads', 'prescriptions');
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+// ROUTES
+app.use("/auth", userRouter);
+app.use("/doctors", DoctorRouter);
+app.use("/appointment", AppointmentRouter);
+app.use("/profile", ProfileRouter);
+app.use("/prescription", PrescriptionRouter);
 
 setupCleanupJob();
 
-
-app.listen(3000,(req,res)=>{
-    console.log("server at 3000");
-})
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});

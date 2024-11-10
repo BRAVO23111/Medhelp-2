@@ -16,7 +16,7 @@ const ViewAppointment = () => {
         const response = await api.get('/appointment/user/appointments', {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         });
-        
+        console.log(response.data);
         if (response.status !== 200) {
           throw new Error('Failed to fetch appointments');
         }
@@ -75,7 +75,6 @@ const ViewAppointment = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
-        {/* Header Section */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-2 tracking-tight">
             Your Appointments
@@ -85,7 +84,6 @@ const ViewAppointment = () => {
           </p>
         </div>
 
-        {/* Appointments Grid */}
         {appointments.length === 0 ? (
           <div className="bg-white rounded-2xl shadow-lg p-8 text-center max-w-lg mx-auto">
             <div className="flex flex-col items-center justify-center space-y-4">
@@ -106,7 +104,6 @@ const ViewAppointment = () => {
                   animation: 'fadeIn 0.5s ease-out forwards'
                 }}
               >
-                {/* Appointment Card Header */}
                 <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">

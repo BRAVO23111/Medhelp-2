@@ -1,64 +1,43 @@
 import express from 'express';
 import { authMiddleware } from '../middleware/authMiddleware.js';
 import { ProfileModel } from '../models/Profile.js';
-import { UserModel } from '../models/User.js';
 
 const router = express.Router();
 
-// Create or update user profile
-router.post('/', authMiddleware, async (req, res) => {
-  const { name , age, contact, medicalHistory } = req.body;
+// Create Profile
+router.post('/create', authMiddleware, async (req, res) => {
+  const userId = req.user._id;
+  const { name, age, contact, medicalHistory } = req.body;
 
   try {
-    // Fetch the user from the database
-    const user = await UserModel.findById(req.userId);
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+    let profile = await ProfileModel.findOne({ userId });
+    if (profile) {
+      return res.status(400).json({ message: 'Profile already exists' });
     }
 
-    // Check if profile exists
-    let profile = await ProfileModel.findOne({ user: req.userId });
-    
-    if (profile) {
-      // Update existing profile
-      profile.name = name || profile.name;
-      profile.age = age || profile.age;
-      profile.contact = contact || profile.contact;
-      profile.medicalHistory = medicalHistory || profile.medicalHistory;
-      profile.updatedAt = Date.now();
-    } else {
-      // Create new profile
-      profile = new ProfileModel({
-        user: req.userId,
-        name, // Link to user
-        age,
-        contact,
-        medicalHistory,
-        createdAt: Date.now(),
-        updatedAt: Date.now()
-      });
-    }
+    // Create a new profile
+    profile = new ProfileModel({
+      userId,
+      name,
+      age,
+      contact,
+      medicalHistory,
+      createdAt: Date.now(),
+      updatedAt: Date.now()
+    });
 
     await profile.save();
-    res.status(200).json(profile);
+    res.status(201).json(profile);
   } catch (error) {
-    console.error('Error creating/updating profile:', error);
+    console.error('Error creating profile:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });
 
-// Get user profile
-router.get('/', authMiddleware, async (req, res) => {
+// Get Profile with User Details
+router.get('/get', authMiddleware, async (req, res) => {
   try {
-    // Fetch the user from the database
-    const user = req.user
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    // Fetch the user's profile from the database
-    const profile = await ProfileModel.findOne({ user: req.userId });
-
+    const profile = await ProfileModel.findOne({ userId: req.user._id });
     if (!profile) {
       return res.status(404).json({ message: 'Profile not found' });
     }
@@ -67,36 +46,17 @@ router.get('/', authMiddleware, async (req, res) => {
   } catch (error) {
     console.error('Error fetching user profile:', error);
     res.status(500).json({ message: 'Server error' });
-    }
-    });
-
-// Delete user profile
-  
-router.delete('/', authMiddleware , async(req,res)=>{
-  try {
-    const user = await UserModel.findById(req.userId);
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    await  ProfileModel.findOneAndDelete({ user: req.userId });
-    
-    res.status(200).json({ message: 'Profile deleted successfully' });
-    
-  } catch (error) {
-    console.error('Error Deleting user profile:', error);
-    res.status(500).json({ message: 'Server error' });
   }
-})
+});
 
-// Update user profile
-router.put('/', authMiddleware, async (req, res) => {
-  const { name , age, contact, medicalHistory } = req.body;
+// Update Profile
+router.put('/update', authMiddleware, async (req, res) => {
+  const { name, age, contact, medicalHistory } = req.body;
 
   try {
     const profile = await ProfileModel.findOneAndUpdate(
-      { user: req.userId },
-      {name , age, contact, medicalHistory, updatedAt: Date.now() },
+      { userId: req.user._id },
+      { name, age, contact, medicalHistory, updatedAt: Date.now() },
       { new: true }
     );
 
@@ -107,6 +67,21 @@ router.put('/', authMiddleware, async (req, res) => {
     res.status(200).json(profile);
   } catch (error) {
     console.error('Error updating profile:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Delete Profile
+router.delete('/delete', authMiddleware, async (req, res) => {
+  try {
+    const profile = await ProfileModel.findOneAndDelete({ userId: req.user._id });
+    if (!profile) {
+      return res.status(404).json({ message: 'Profile not found' });
+    }
+
+    res.status(200).json({ message: 'Profile deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting profile:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });

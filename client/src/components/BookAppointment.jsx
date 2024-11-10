@@ -31,7 +31,7 @@ const Bookappointment = () => {
   const fetchPatientDetails = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await api.get('/profile', {
+      const response = await api.get('/profile/get', {
         headers: {
           'Authorization': `Bearer ${token}`
         }

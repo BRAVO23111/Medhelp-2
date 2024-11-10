@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import api from '../config/config';
 
 const ManageDoctors = () => {
   const [doctors, setDoctors] = useState([]);
@@ -15,7 +16,7 @@ const ManageDoctors = () => {
         return;
       }
       
-      const response = await axios.get("https://medhelp-2.onrender.com/doctors", {
+      const response = await api.get("/doctors", {
         headers: {
           Authorization: `Bearer ${token}`
         }
