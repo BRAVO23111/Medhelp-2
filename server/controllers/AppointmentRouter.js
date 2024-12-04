@@ -12,7 +12,13 @@ const router = express.Router();
 // Book an appointment
 router.post("/bookappointment", authMiddleware, async (req, res) => {
     try {
-        const { doctorId, patientId, date, time } = req.body;
+        const { doctorId, patientId, date, time, reason } = req.body;
+
+        // Fetch patient's details to get the name
+        const patient = await UserModel.findById(patientId);
+        if (!patient) {
+            return res.status(404).json({ message: "Patient not found." });
+        }
 
         // Create a new appointment
         const newAppointment = new AppointmentModel({
@@ -20,6 +26,9 @@ router.post("/bookappointment", authMiddleware, async (req, res) => {
             patient: patientId,
             date,
             time,
+            reason,
+            doctorName: req.user.username, // Assuming req.user contains the doctor's info
+            patientName: patient.username // Save the patient's name
         });
         await newAppointment.save();
 
@@ -27,12 +36,9 @@ router.post("/bookappointment", authMiddleware, async (req, res) => {
         await DoctorModel.findByIdAndUpdate(doctorId, { $push: { appointments: newAppointment._id } });
         await UserModel.findByIdAndUpdate(patientId, { $push: { appointments: newAppointment._id } });
 
-        // Fetch patient's contact details
-        const patient = await UserModel.findById(patientId);
-
         // Send SMS confirmation to patient
-        if (patient && patient.contact) {
-            await sendSms(patient.contact, `Your appointment is confirmed on ${date} at ${time}.`);
+        if (patient.contact) {
+            await sendSms(patient.contact, `Your appointment is confirmed on ${date} at ${time}. Reason: ${reason}.`);
         }
 
         res.status(201).json({ message: "Appointment booked successfully", appointment: newAppointment });
@@ -106,5 +112,7 @@ router.get('/:doctorId/appointments', async (req, res) => {
         res.status(500).json({ message: "Error fetching doctor appointments." });
     }
 });
+
+
 
 export { router as AppointmentRouter };

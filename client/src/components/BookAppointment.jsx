@@ -14,6 +14,7 @@ const Bookappointment = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [reason, setReason] = useState('');
 
   const { doctorId } = useParams();
   const selectedDoctorId = useRecoilValue(selectedDoctorIdState);
@@ -59,7 +60,8 @@ const Bookappointment = () => {
           doctorId: actualDoctorId,
           patientId: patientId,
           date: new Date(`${date}T${time}`).toISOString(),
-          time: time
+          time: time,
+          reason: reason
         },
         {
           headers: {
@@ -163,6 +165,20 @@ const Bookappointment = () => {
               required
             />
           </div>
+        </div>
+        
+        <div>
+          <label htmlFor="reason" className="block text-sm font-medium text-gray-700">
+            Reason
+          </label>
+          <input
+            type="text"
+            id="reason"
+            value={reason}
+            onChange={(e) => setReason(e.target.value)}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-600"
+            required
+          />
         </div>
         
         <button

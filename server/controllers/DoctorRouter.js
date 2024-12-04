@@ -18,7 +18,7 @@ router.get('/', authMiddleware, authenticateRole('patient', 'admin'), async (req
 });
 
 // Register a new doctor (accessible by admin)
-router.post('/registerdoctor', async (req, res) => {
+router.post('/registerdoctor',authMiddleware,authenticateRole('admin'), async (req, res) => {
   try {
     const { username, password, speciality } = req.body;
     const existingDoctor = await DoctorModel.findOne({ username: username });
@@ -42,7 +42,7 @@ router.post('/registerdoctor', async (req, res) => {
 });
 
 // Get user details by ID
-router.get('/user/:userId', async (req, res) => {
+router.get('/user/:userId',authMiddleware,authenticateRole('doctor', 'admin' ,'patient'), async (req, res) => {
   try {
     const userId = req.params.userId;
     const user = await UserModel.findById(userId);
@@ -82,6 +82,32 @@ router.get('/appointments', authMiddleware, authenticateRole('doctor'), async (r
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });
   }
+});
+
+// Update doctor information
+router.put('/:doctorId', authMiddleware, async (req, res) => {
+    const { doctorId } = req.params;
+    const { username, speciality } = req.body;
+
+    try {
+        // Find the doctor by ID and update their details
+        const updatedDoctor = await DoctorModel.findByIdAndUpdate(
+            doctorId,
+            { username, speciality },
+            { new: true, runValidators: true } // Return the updated document and run validators
+        );
+
+        // Check if the doctor was found
+        if (!updatedDoctor) {
+            return res.status(404).json({ message: 'Doctor not found' });
+        }
+
+        // Return the updated doctor details
+        res.status(200).json(updatedDoctor);
+    } catch (error) {
+        console.error('Error updating doctor:', error);
+        res.status(500).json({ message: 'Error updating doctor' });
+    }
 });
 
 export { router as DoctorRouter };
