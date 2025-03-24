@@ -34,7 +34,7 @@ const DoctorDashboard = () => {
   const handleMarkAsDone = async (appointmentId) => {
     try {
       await api.put(`/appointments/${appointmentId}/done`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` , },
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
       });
       // Remove the appointment from the list
       setAppointments(appointments.filter(appointment => appointment._id !== appointmentId));

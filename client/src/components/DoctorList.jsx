@@ -5,6 +5,7 @@ import { selectedDoctorIdState } from '../atoms/Doctoratom';
 import { motion } from 'framer-motion';
 import { FaSearch, FaUserMd } from 'react-icons/fa';
 import api from '../config/config';
+import { Button } from "./ui/button";
 
 const DoctorList = () => {
   const [doctors, setDoctors] = useState([]);
@@ -178,12 +179,13 @@ const DoctorList = () => {
                 </div>
                 <h3 className="text-xl font-semibold mb-2 text-center">{doctor.username}</h3>
                 <p className="text-gray-600 mb-4 text-center">{doctor.speciality}</p>
-                <button
+                <Button
                   onClick={() => bookAppointment(doctor._id)}
-                  className="w-full bg-blue-500 text-white py-2 px-4 rounded-full hover:bg-blue-600 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                  variant="default"
+                  className="w-full"
                 >
                   Book Appointment
-                </button>
+                </Button>
               </div>
             </motion.div>
           ))}

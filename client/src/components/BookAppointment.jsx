@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { selectedDoctorIdState } from '../atoms/Doctoratom';
 import { FaCalendarAlt, FaClock } from 'react-icons/fa';
-
+import { Button } from "./ui/button";
 import api from '../config/config';
 
 const Bookappointment = () => {
@@ -181,13 +181,14 @@ const Bookappointment = () => {
           />
         </div>
         
-        <button
+        <Button
           type="submit"
-          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-400 disabled:cursor-not-allowed"
+          className="w-full"
+          variant="default"
           disabled={loading}
         >
           {loading ? 'Booking...' : 'Book Appointment'}
-        </button>
+        </Button>
       </form>
     </div>
   );

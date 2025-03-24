@@ -1,5 +1,5 @@
 import express from 'express';
-import { authMiddleware } from '../middleware/authMiddleware.js';
+import { authenticateRole, authMiddleware } from '../middleware/authMiddleware.js';
 import { AppointmentModel } from '../models/AppointmentSchema.js';
 import { DoctorModel } from '../models/Doctor.js';
 import { UserModel } from '../models/User.js';
@@ -27,8 +27,6 @@ router.post("/bookappointment", authMiddleware, async (req, res) => {
             date,
             time,
             reason,
-            doctorName: req.user.username, // Assuming req.user contains the doctor's info
-            patientName: patient.username // Save the patient's name
         });
         await newAppointment.save();
 
@@ -49,7 +47,7 @@ router.post("/bookappointment", authMiddleware, async (req, res) => {
 });
 
 // Get all upcoming appointments
-router.get("/appointments", authMiddleware, async (req, res) => {
+router.get("/appointments",authenticateRole("doctor" ,'admin'),  authMiddleware, async (req, res) => {
     try {
         const appointments = await AppointmentModel.find({ date: { $gte: new Date() } })
             .populate('doctor', 'name specialty')
@@ -113,6 +111,32 @@ router.get('/:doctorId/appointments', async (req, res) => {
     }
 });
 
+// Mark an appointment as done
+router.put('/:appointmentId/done', authenticateRole("doctor", "admin"), authMiddleware, async (req, res) => {
+    const { appointmentId } = req.params;
+
+    try {
+        // Find the appointment by ID and update its status
+        const updatedAppointment = await AppointmentModel.findByIdAndUpdate(
+            appointmentId,
+            { done: true }, // Assuming you have a 'done' field in your Appointment model
+            { new: true } // Return the updated document and run validators
+        )
+        .populate('doctor', 'name') // Populate only the 'name' field of the doctor
+        .populate('patient', 'name'); // Populate only the 'name' field of the patient
+
+        // Check if the appointment was found
+        if (!updatedAppointment) {
+            return res.status(404).json({ message: 'Appointment not found' });
+        }
+
+        // Return the updated appointment details
+        res.status(200).json(updatedAppointment);
+    } catch (error) {
+        console.error('Error marking appointment as done:', error);
+        res.status(500).json({ message: 'Error marking appointment as done' });
+    }
+});
 
 
 export { router as AppointmentRouter };

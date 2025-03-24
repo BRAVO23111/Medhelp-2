@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
-
+import {Button} from './ui/button';
+import api from '../config/config';
 const Register = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -10,13 +10,7 @@ const Register = () => {
   const navigate = useNavigate();
   const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
-  const api = axios.create({
-    baseURL: BASE_URL,
-    withCredentials: true,
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  });
+
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -74,9 +68,9 @@ const Register = () => {
               <option value="admin">Admin</option>
             </select>
           </div>
-          <button type="submit" className="w-full bg-indigo-500 text-white py-2 rounded-lg hover:bg-indigo-600 transition duration-300">
+          <Button type="submit" className="w-full" variant="default">
             Register
-          </button>
+          </Button>
         </form>
         <p className="mt-6 text-center text-sm text-gray-600">
           Already have an account? <Link to="/login" className="text-indigo-500 font-medium hover:text-indigo-600">Login</Link>

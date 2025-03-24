@@ -4,6 +4,7 @@ import { useSetRecoilState } from 'recoil';
 import { Link, useNavigate } from 'react-router-dom';
 import { userState } from '../atoms/Doctoratom';
 import toast, { Toaster } from 'react-hot-toast';
+import { Button } from "./ui/button";
 
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
@@ -139,9 +140,9 @@ const Login = () => {
               <option value="admin">Admin</option>
             </select>
           </div>
-          <button type="submit" className="w-full bg-indigo-500 text-white py-2 rounded-lg hover:bg-indigo-600 transition duration-300">
+          <Button type="submit" className="w-full" variant="default">
             Log In
-          </button>
+          </Button>
         </form>
         <p className="mt-6 text-center text-sm text-gray-600">Don't have an account? <Link to="/register" className="text-indigo-500 font-medium hover:text-indigo-600">Register</Link></p>
         <Toaster />
