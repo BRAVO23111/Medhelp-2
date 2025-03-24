@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import axios from 'axios';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import api from '../config/config';
+import { Button } from "./ui/button";
 
 const AddDoctor = () => {
   const [username, setUsername] = useState('');
@@ -52,7 +52,7 @@ const AddDoctor = () => {
           <label htmlFor="speciality" className="block text-gray-700 text-sm font-bold mb-2">Speciality</label>
           <input type="text" id="speciality" value={speciality} onChange={(e) => setSpeciality(e.target.value)} className="w-full border border-gray-300 rounded-md px-3 py-2" />
         </div>
-        <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Add Doctor</button>
+        <Button type="submit" variant="default" className="w-full">Add Doctor</Button>
       </form>
     </div>
   );

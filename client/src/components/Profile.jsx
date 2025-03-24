@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaUser, FaCalendar, FaPhone, FaNotesMedical, FaEdit, FaSave, FaPlus } from 'react-icons/fa';
+import { FaEdit } from 'react-icons/fa';
+import { useRecoilValue } from 'recoil';
+
 import api from '../config/config';
+import { Button } from "./ui/button";
 
 const CreateProfile = () => {
   const navigate = useNavigate();
@@ -106,13 +109,14 @@ const CreateProfile = () => {
             <div className="bg-white rounded-lg shadow-lg p-6">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold text-gray-800">Medical Profile</h2>
-                <button
+                <Button
                   onClick={() => setIsEditing(true)}
-                  className="flex items-center px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                  variant="default"
+                  className="flex items-center"
                 >
                   <FaEdit className="mr-2" />
                   Edit Profile
-                </button>
+                </Button>
               </div>
               <div className="grid grid-cols-2 gap-4 mb-6">
                 <div>

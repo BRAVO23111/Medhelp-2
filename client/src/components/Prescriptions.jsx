@@ -4,6 +4,7 @@ import { IoCloudUploadOutline, IoDocumentOutline, IoCloseOutline, IoEyeOutline, 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import api from '../config/config';
+import { Button } from "./ui/button";
 
 const FileUpload = () => {
   const [files, setFiles] = useState([]);
@@ -145,12 +146,24 @@ const FileUpload = () => {
                     <span className="text-sm font-medium text-gray-700">{file.filename}</span>
                   </div>
                   <div className="flex space-x-2">
-                    <button onClick={() => viewFile(file.url)} className="text-blue-500 hover:text-blue-600" title="View file">
+                    <Button
+                      onClick={() => viewFile(file.url)}
+                      variant="ghost"
+                      size="icon"
+                      className="text-blue-500 hover:text-blue-600"
+                      title="View file"
+                    >
                       <IoEyeOutline className="h-5 w-5" />
-                    </button>
-                    <button onClick={() => deleteUploadedFile(file.filename)} className="text-red-500 hover:text-red-600" title="Delete file">
+                    </Button>
+                    <Button
+                      onClick={() => deleteUploadedFile(file.filename)}
+                      variant="ghost"
+                      size="icon"
+                      className="text-red-500 hover:text-red-600"
+                      title="Delete file"
+                    >
                       <IoTrashOutline className="h-5 w-5" />
-                    </button>
+                    </Button>
                   </div>
                 </motion.div>
               ))}

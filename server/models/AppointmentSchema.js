@@ -18,7 +18,11 @@ const AppointmentSchema = new mongoose.Schema({
     reason : {
         type: String,
         required: true
-    }
+    },
+    done: {
+        type: Boolean,
+        default: false
+    },
 });
 
 // Ensure indexes for faster query performance
