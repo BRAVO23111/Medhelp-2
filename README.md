@@ -1,7 +1,7 @@
 
 <h1 align="center" style="font-weight: bold;">MedHelp</h1>
 
-<img width="1436" alt="Screenshot 2024-04-20 at 12 37 42 PM" src="https://i.postimg.cc/zv2RNzkg/Screenshot-2024-10-18-at-8-00-53-PM.png">
+<img width="1436" alt="Screenshot 2024-04-20 at 12 37 42 PM" src="https://imagekit.io/tools/asset-public-link?detail=%7B%22name%22%3A%22Screenshot%202025-03-25%20at%205.18.44%E2%80%AFPM.png%22%2C%22type%22%3A%22image%2Fpng%22%2C%22signedurl_expire%22%3A%222028-03-24T11%3A50%3A43.950Z%22%2C%22signedUrl%22%3A%22https%3A%2F%2Fmedia-hosting.imagekit.io%2F%2F8b3a7a60fcef4ab9%2FScreenshot%25202025-03-25%2520at%25205.18.44%25E2%2580%25AFPM.png%3FExpires%3D1837511444%26Key-Pair-Id%3DK2ZIVPTIP2VGHC%26Signature%3DHH1wzNbWkSa-5tu2YjpMJFODKpM1QwFWKIAoUbSk-cEC2u2Ps70edSQAuHoGydJ2xYYRCF5Vm54ntpK-Ou~l~~FlteR3U1bI79uPbmfyjbiJvSGqNghU8IEHVq4thptfSIpu4SkqiOg1O0jJ8atFScie0bBRY8wtTpkwbfeuujVgT9HU1XCh0j7bhrpxWXt4OvkPDCHHFW2cBn627ZlWvdFme~eYvDIq-eZHUdCOxgFrmoyKxSeFqWjJXucFsU2M~KxhQN8uPeXnD-tSwVag1KWdflo11AQ7DWLP0SUztruTdLidAzuJT2eFa-rad2Z4rdzwiwerl~B~HsrdoTtXNw__%22%7D">
 
 <p align="center">"MedHelp" is a web application designed to facilitate the booking of appointments with local doctors. The platform aims to streamline the process of scheduling medical appointments by providing users with easy access to available doctors and their appointment slots.</p>
 
