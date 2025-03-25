@@ -17,6 +17,7 @@ import PatientDashboard from './components/PatientDashboard';
 import toast, { Toaster } from 'react-hot-toast';
 import Profile from './components/Profile';
 import Prescriptions from './components/Prescriptions';
+import DoctorDetails from './components/DoctorDetails';
 
 
 function App() {
@@ -54,6 +55,7 @@ function App() {
           <Route path='/' element={<HomePage/>} />
           <Route path='/bookappointment' element={<DoctorList/>}/>
             <Route path='/patientDashboard' element={<PatientDashboard/>} />
+            <Route path="/doctor/:doctorId" element={<DoctorDetails />} />
             <Route path="/bookappointment/:doctorId" element={<Bookappointment />} />
             <Route path='/login' element={<Login />} />
             <Route path='/register' element={<Register />} />

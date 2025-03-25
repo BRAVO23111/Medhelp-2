@@ -41,6 +41,21 @@ router.post('/registerdoctor',authMiddleware,authenticateRole('admin'), async (r
   }
 });
 
+// Get doctor details by ID
+router.get('/:doctorId', authMiddleware, authenticateRole('patient', 'admin', 'doctor'), async (req, res) => {
+  try {
+    const doctorId = req.params.doctorId;
+    const doctor = await DoctorModel.findById(doctorId);
+    if (!doctor) {
+      return res.status(404).json({ message: 'Doctor not found' });
+    }
+    res.status(200).json(doctor);
+  } catch (error) {
+    console.error('Error fetching doctor details:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
 // Get user details by ID
 router.get('/user/:userId',authMiddleware,authenticateRole('doctor', 'admin' ,'patient'), async (req, res) => {
   try {
