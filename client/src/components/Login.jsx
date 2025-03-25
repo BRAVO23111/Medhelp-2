@@ -5,6 +5,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { userState } from '../atoms/Doctoratom';
 import toast, { Toaster } from 'react-hot-toast';
 import { Button } from "./ui/button";
+import { FcGoogle } from "react-icons/fc";
+import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
@@ -144,6 +146,33 @@ const Login = () => {
             Log In
           </Button>
         </form>
+        
+        <div className="mt-6">
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-300"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-2 bg-white text-gray-500">Or continue with</span>
+            </div>
+          </div>
+          
+          <div className="mt-6">
+            <div className="flex justify-center">
+              <Button 
+                onClick={() => {
+                  window.location.href = `${BASE_URL}/auth/google`;
+                }}
+                className="flex items-center gap-2 bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
+                variant="outline"
+              >
+                <FcGoogle className="w-5 h-5" />
+                Sign in with Google
+              </Button>
+            </div>
+          </div>
+        </div>
+        
         <p className="mt-6 text-center text-sm text-gray-600">Don't have an account? <Link to="/register" className="text-indigo-500 font-medium hover:text-indigo-600">Register</Link></p>
         <Toaster />
       </div>
