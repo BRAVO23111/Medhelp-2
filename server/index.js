@@ -4,12 +4,16 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import passport from 'passport';
+import session from 'express-session';
+import MongoStore from 'connect-mongo';
 import { userRouter } from './controllers/AuthController.js';
 import { DoctorRouter } from './controllers/DoctorRouter.js';
 import { AppointmentRouter } from './controllers/AppointmentRouter.js';
 import setupCleanupJob from './middleware/cleanup.js';
 import { ProfileRouter } from './controllers/ProfileRouter.js';
 import { PrescriptionRouter } from './controllers/PrescriptionRouter.js';
+import './config/passport.js';
 
 // ES module dirname setup
 const __filename = fileURLToPath(import.meta.url);
@@ -38,6 +42,25 @@ app.use(cors({
 
 // Middleware
 app.use(express.json());
+
+// Session configuration
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'mysecretkey',
+  resave: false,
+  saveUninitialized: false,
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGO_URI,
+    ttl: 60 * 60 * 24 // 1 day
+  }),
+  cookie: {
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: 1000 * 60 * 60 * 24 // 1 day
+  }
+}));
+
+// Initialize passport and session
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Serve static files from uploads directory
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));

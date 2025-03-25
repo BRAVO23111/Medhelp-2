@@ -5,6 +5,7 @@ import './App.css';
 import Navbar from './components/Navbar';
 import Register from './components/Register';
 import Login from './components/Login';
+import OAuthCallback from './components/OAuthCallback';
 import DoctorList from './components/DoctorList';
 import Bookappointment from './components/BookAppointment';
 import ViewAppointment from './components/ViewAppoinments';
@@ -58,6 +59,7 @@ function App() {
             <Route path="/doctor/:doctorId" element={<DoctorDetails />} />
             <Route path="/bookappointment/:doctorId" element={<Bookappointment />} />
             <Route path='/login' element={<Login />} />
+          <Route path='/oauth-callback' element={<OAuthCallback />} />
             <Route path='/register' element={<Register />} />
             <Route path='/viewappointments' element={<ViewAppointment />} />
             <Route path='/admindashboard' element={<AdminDashboard />} />

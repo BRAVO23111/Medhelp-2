@@ -1,8 +1,11 @@
 import express from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import passport from "passport";
 import { UserModel } from "../models/User.js";
 import { DoctorModel } from "../models/Doctor.js";
+import { sendConfirmationEmail } from "../utils/emailService.js";
+import "../config/passport.js";
 
 const router = express.Router();
 const secret =  "mysecret"; // Store secret in environment variable
@@ -73,5 +76,47 @@ router.post("/login", async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 });
+
+// Google OAuth routes
+router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+router.get('/google/callback', 
+  passport.authenticate('google', { failureRedirect: '/login', session: true }),
+  async (req, res) => {
+    try {
+      // Store user in session
+      req.session.user = {
+        _id: req.user._id,
+        role: req.user.role
+      };
+
+      // Generate JWT token for the authenticated user
+      const token = jwt.sign(
+        { userId: req.user._id, role: req.user.role },
+        secret,
+        { expiresIn: '1h' }
+      );
+
+      // If email is available, send confirmation email for Google OAuth login
+      if (req.user.email) {
+        try {
+          // Pass true as third parameter to indicate OAuth authentication
+          await sendConfirmationEmail(req.user.email, req.user.username, true);
+          req.user.isEmailVerified = true;
+          await req.user.save();
+        } catch (emailError) {
+          console.error('Error sending confirmation email:', emailError);
+          // Continue even if email fails
+        }
+      }
+
+      // Redirect to frontend with token and user info
+      res.redirect(`${process.env.VITE_URL || 'http://localhost:5173'}/oauth-callback?token=${token}&userId=${req.user._id}&role=${req.user.role}`);
+    } catch (error) {
+      console.error('Error in Google callback:', error);
+      res.redirect(`${process.env.VITE_URL || 'http://localhost:5173'}/login?error=auth_failed`);
+    }
+  }
+);
 
 export { router as userRouter };
